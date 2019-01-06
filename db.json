@@ -1,0 +1,40 @@
+{
+    "component": [
+        {
+            "id" : 1, 
+            "name":"component A", 
+            "description":"description component A" ,
+            "price": 10,
+            "categoryId": 1
+        },
+        {
+            "id" : 2, 
+            "name":"component B", 
+            "description":"description component B" ,
+            "price": 5,
+            "categoryId": 1
+        }
+    ],
+    "category" : [
+        {
+            "id": 1,
+            "name": "cat 1",
+            "description": "description cat 1"
+        }
+    ],
+    "product" : [
+        {
+            "id": 1,
+            "name": "product alpha",
+            "description": "description product alpha",
+            "componentId":[1,2]
+        },
+        {
+            "id": 2,
+            "name": "product beta",
+            "description": "description product beta",
+            "componentId":[1]
+        }
+    ]
+
+}
