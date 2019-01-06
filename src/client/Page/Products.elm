@@ -27,6 +27,9 @@ initModel = {
         products = []
     }
 
+type alias HttpResult = Result Http.Error (List Product)
+type Msg = GotProducts HttpResult
+
 view : Model -> PageLayout.PageData Msg
 view model =  
     { title = "Products Page"
@@ -41,18 +44,12 @@ view model =
         ]
     }
 
-type alias HttpResult = Result Http.Error (List Product)
-
-type Msg = 
-    None
-   | GotProducts HttpResult
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model = 
     case msg of
         GotProducts (Ok products) -> ({model|products=products}, Cmd.none)
         GotProducts (Err httpErr) -> (model, Cmd.none)
-        None -> (model, Cmd.none)
 --
 init : () -> (Model, Cmd Msg)
 init _ = (initModel, loadProducts)

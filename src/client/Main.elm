@@ -8,6 +8,8 @@ import Url.Parser.Query as Query
 import Page.Home
 import Page.Products
 import Page.NotFound
+import Page.Categories
+import Page.Components
 
 main : Program () Model Msg
 main = Browser.application 
@@ -25,11 +27,15 @@ type Msg
     | LinkClicked Browser.UrlRequest
     | ProductsMsg Page.Products.Msg
     | HomeMsg Page.Home.Msg
+    | CategoriesMsg Page.Categories.Msg
+    | ComponentsMsg Page.Components.Msg
 
 type Page 
     = Home Page.Home.Model
     | Products Page.Products.Model
     | NotFound
+    | Categories Page.Categories.Model
+    | Components Page.Components.Model
 
 type alias Model = 
     { key: Nav.Key
@@ -45,6 +51,10 @@ view model =
             PageLayout.view ProductsMsg (Page.Products.view productsModel) 
         NotFound ->
             PageLayout.view never (Page.NotFound.view ())
+        Categories categoriesModel ->
+            PageLayout.view CategoriesMsg (Page.Categories.view categoriesModel)
+        Components componentsModel ->
+            PageLayout.view ComponentsMsg (Page.Components.view componentsModel)
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -63,7 +73,14 @@ update msg model =
             case model.page of
                 Home homeModel -> stepHome model (Page.Home.update homeMsg homeModel)
                 _ -> (model, Cmd.none)
-        
+        CategoriesMsg categoriesMsg ->
+            case model.page of
+                Categories categoriesModel -> stepCategories model (Page.Categories.update categoriesMsg categoriesModel)
+                _ -> (model, Cmd.none)
+        ComponentsMsg componentsMsg ->
+            case model.page of
+                Components componentsModel -> stepComponents model (Page.Components.update componentsMsg componentsModel)
+                _ -> (model, Cmd.none)
 
 init : () -> Url.Url -> Nav.Key -> (Model, Cmd Msg)
 init flags url key = (
@@ -83,6 +100,12 @@ getRoute model =
         , map 
             (stepProducts model (Page.Products.init ()))  
             (s "products" )
+        , map
+            (stepCategories model (Page.Categories.init ()))
+            (s "categories")
+        , map
+            (stepComponents model (Page.Components.init ()))
+            (s "components")
         ]
 
 getPage : Model -> Url.Url -> (Model, Cmd Msg)
@@ -101,5 +124,17 @@ stepProducts: Model -> (Page.Products.Model, Cmd Page.Products.Msg) -> (Model, C
 stepProducts model (productsModel, productsMsg) =
     ( {model | page = Products productsModel}
     ,  Cmd.map ProductsMsg productsMsg
+    )
+
+stepCategories: Model -> (Page.Categories.Model, Cmd Page.Categories.Msg) -> (Model, Cmd Msg)
+stepCategories model (categoriesModel, categoriesMsg) =
+    ( {model | page = Categories categoriesModel}
+    ,  Cmd.map CategoriesMsg categoriesMsg
+    )
+
+stepComponents: Model -> (Page.Components.Model, Cmd Page.Components.Msg) -> (Model, Cmd Msg)
+stepComponents model (componentsModel, componentsMsg) =
+    ( {model | page = Components componentsModel}
+    ,  Cmd.map ComponentsMsg componentsMsg
     )
     

@@ -5008,10 +5008,46 @@ var author$project$Main$subscriptions = function (model) {
 	return elm$core$Platform$Sub$none;
 };
 var author$project$Main$NotFound = {$: 'NotFound'};
+var author$project$Main$Categories = function (a) {
+	return {$: 'Categories', a: a};
+};
+var author$project$Main$CategoriesMsg = function (a) {
+	return {$: 'CategoriesMsg', a: a};
+};
+var elm$core$Platform$Cmd$map = _Platform_map;
+var author$project$Main$stepCategories = F2(
+	function (model, _n0) {
+		var categoriesModel = _n0.a;
+		var categoriesMsg = _n0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					page: author$project$Main$Categories(categoriesModel)
+				}),
+			A2(elm$core$Platform$Cmd$map, author$project$Main$CategoriesMsg, categoriesMsg));
+	});
+var author$project$Main$Components = function (a) {
+	return {$: 'Components', a: a};
+};
+var author$project$Main$ComponentsMsg = function (a) {
+	return {$: 'ComponentsMsg', a: a};
+};
+var author$project$Main$stepComponents = F2(
+	function (model, _n0) {
+		var componentsModel = _n0.a;
+		var componentsMsg = _n0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					page: author$project$Main$Components(componentsModel)
+				}),
+			A2(elm$core$Platform$Cmd$map, author$project$Main$ComponentsMsg, componentsMsg));
+	});
 var author$project$Main$HomeMsg = function (a) {
 	return {$: 'HomeMsg', a: a};
 };
-var elm$core$Platform$Cmd$map = _Platform_map;
 var author$project$Main$stepHome = F2(
 	function (model, _n0) {
 		var homeModel = _n0.a;
@@ -5042,16 +5078,11 @@ var author$project$Main$stepProducts = F2(
 				}),
 			A2(elm$core$Platform$Cmd$map, author$project$Main$ProductsMsg, productsMsg));
 	});
-var author$project$Page$Home$init = function (_n0) {
-	return _Utils_Tuple2(
-		{},
-		elm$core$Platform$Cmd$none);
+var author$project$Page$Categories$initModel = {categories: _List_Nil};
+var author$project$Page$Categories$GotCategories = function (a) {
+	return {$: 'GotCategories', a: a};
 };
-var author$project$Page$Products$initModel = {products: _List_Nil};
-var author$project$Page$Products$GotProducts = function (a) {
-	return {$: 'GotProducts', a: a};
-};
-var author$project$Page$Products$Product = F3(
+var author$project$Page$Categories$Category = F3(
 	function (id, name, description) {
 		return {description: description, id: id, name: name};
 	});
@@ -5059,14 +5090,17 @@ var elm$json$Json$Decode$field = _Json_decodeField;
 var elm$json$Json$Decode$int = _Json_decodeInt;
 var elm$json$Json$Decode$map3 = _Json_map3;
 var elm$json$Json$Decode$string = _Json_decodeString;
-var author$project$Page$Products$productDecoder = A4(
+var author$project$Page$Categories$categoryDecoder = A4(
 	elm$json$Json$Decode$map3,
-	author$project$Page$Products$Product,
+	author$project$Page$Categories$Category,
 	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
 	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
 	A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string));
 var elm$json$Json$Decode$list = _Json_decodeList;
-var author$project$Page$Products$productsDecoder = elm$json$Json$Decode$list(author$project$Page$Products$productDecoder);
+var author$project$Page$Categories$categoriesDecoder = elm$json$Json$Decode$list(author$project$Page$Categories$categoryDecoder);
+var elm$core$Basics$identity = function (x) {
+	return x;
+};
 var elm$core$Result$mapError = F2(
 	function (f, result) {
 		if (result.$ === 'Ok') {
@@ -5083,9 +5117,6 @@ var elm$core$Basics$composeR = F3(
 		return g(
 			f(x));
 	});
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
 var elm$core$Basics$compare = _Utils_compare;
@@ -5948,6 +5979,60 @@ var elm$http$Http$get = function (r) {
 	return elm$http$Http$request(
 		{body: elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: elm$core$Maybe$Nothing, tracker: elm$core$Maybe$Nothing, url: r.url});
 };
+var author$project$Page$Categories$loadProducts = elm$http$Http$get(
+	{
+		expect: A2(elm$http$Http$expectJson, author$project$Page$Categories$GotCategories, author$project$Page$Categories$categoriesDecoder),
+		url: '/api/categories'
+	});
+var author$project$Page$Categories$init = function (_n0) {
+	return _Utils_Tuple2(author$project$Page$Categories$initModel, author$project$Page$Categories$loadProducts);
+};
+var author$project$Page$Components$initModel = {components: _List_Nil};
+var author$project$Page$Components$GotComponents = function (a) {
+	return {$: 'GotComponents', a: a};
+};
+var author$project$Page$Components$Component = F4(
+	function (id, name, description, price) {
+		return {description: description, id: id, name: name, price: price};
+	});
+var elm$json$Json$Decode$float = _Json_decodeFloat;
+var elm$json$Json$Decode$map4 = _Json_map4;
+var author$project$Page$Components$componentDecoder = A5(
+	elm$json$Json$Decode$map4,
+	author$project$Page$Components$Component,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'price', elm$json$Json$Decode$float));
+var author$project$Page$Components$componentsDecoder = elm$json$Json$Decode$list(author$project$Page$Components$componentDecoder);
+var author$project$Page$Components$loadComponents = elm$http$Http$get(
+	{
+		expect: A2(elm$http$Http$expectJson, author$project$Page$Components$GotComponents, author$project$Page$Components$componentsDecoder),
+		url: '/api/components'
+	});
+var author$project$Page$Components$init = function (_n0) {
+	return _Utils_Tuple2(author$project$Page$Components$initModel, author$project$Page$Components$loadComponents);
+};
+var author$project$Page$Home$init = function (_n0) {
+	return _Utils_Tuple2(
+		{},
+		elm$core$Platform$Cmd$none);
+};
+var author$project$Page$Products$initModel = {products: _List_Nil};
+var author$project$Page$Products$GotProducts = function (a) {
+	return {$: 'GotProducts', a: a};
+};
+var author$project$Page$Products$Product = F3(
+	function (id, name, description) {
+		return {description: description, id: id, name: name};
+	});
+var author$project$Page$Products$productDecoder = A4(
+	elm$json$Json$Decode$map3,
+	author$project$Page$Products$Product,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+	A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string));
+var author$project$Page$Products$productsDecoder = elm$json$Json$Decode$list(author$project$Page$Products$productDecoder);
 var author$project$Page$Products$loadProducts = elm$http$Http$get(
 	{
 		expect: A2(elm$http$Http$expectJson, author$project$Page$Products$GotProducts, author$project$Page$Products$productsDecoder),
@@ -6085,7 +6170,21 @@ var author$project$Main$getRoute = function (model) {
 					author$project$Main$stepProducts,
 					model,
 					author$project$Page$Products$init(_Utils_Tuple0)),
-				elm$url$Url$Parser$s('products'))
+				elm$url$Url$Parser$s('products')),
+				A2(
+				elm$url$Url$Parser$map,
+				A2(
+					author$project$Main$stepCategories,
+					model,
+					author$project$Page$Categories$init(_Utils_Tuple0)),
+				elm$url$Url$Parser$s('categories')),
+				A2(
+				elm$url$Url$Parser$map,
+				A2(
+					author$project$Main$stepComponents,
+					model,
+					author$project$Page$Components$init(_Utils_Tuple0)),
+				elm$url$Url$Parser$s('components'))
 			]));
 };
 var elm$url$Url$Parser$getFirstMatch = function (states) {
@@ -6220,25 +6319,49 @@ var author$project$Main$getPage = F2(
 				elm$core$Platform$Cmd$none);
 		}
 	});
+var author$project$Page$Categories$update = F2(
+	function (msg, model) {
+		if (msg.a.$ === 'Ok') {
+			var categories = msg.a.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{categories: categories}),
+				elm$core$Platform$Cmd$none);
+		} else {
+			var httpErr = msg.a.a;
+			return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+		}
+	});
+var author$project$Page$Components$update = F2(
+	function (msg, model) {
+		if (msg.a.$ === 'Ok') {
+			var components = msg.a.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{components: components}),
+				elm$core$Platform$Cmd$none);
+		} else {
+			var httpErr = msg.a.a;
+			return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+		}
+	});
 var author$project$Page$Home$update = F2(
 	function (msg, model) {
 		return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 	});
 var author$project$Page$Products$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'GotProducts') {
-			if (msg.a.$ === 'Ok') {
-				var products = msg.a.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{products: products}),
-					elm$core$Platform$Cmd$none);
-			} else {
-				var httpErr = msg.a.a;
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-			}
+		if (msg.a.$ === 'Ok') {
+			var products = msg.a.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{products: products}),
+				elm$core$Platform$Cmd$none);
 		} else {
+			var httpErr = msg.a.a;
 			return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 		}
 	});
@@ -6538,7 +6661,7 @@ var author$project$Main$update = F2(
 				} else {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
-			default:
+			case 'HomeMsg':
 				var homeMsg = msg.a;
 				var _n3 = model.page;
 				if (_n3.$ === 'Home') {
@@ -6550,12 +6673,126 @@ var author$project$Main$update = F2(
 				} else {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
+			case 'CategoriesMsg':
+				var categoriesMsg = msg.a;
+				var _n4 = model.page;
+				if (_n4.$ === 'Categories') {
+					var categoriesModel = _n4.a;
+					return A2(
+						author$project$Main$stepCategories,
+						model,
+						A2(author$project$Page$Categories$update, categoriesMsg, categoriesModel));
+				} else {
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
+			default:
+				var componentsMsg = msg.a;
+				var _n5 = model.page;
+				if (_n5.$ === 'Components') {
+					var componentsModel = _n5.a;
+					return A2(
+						author$project$Main$stepComponents,
+						model,
+						A2(author$project$Page$Components$update, componentsMsg, componentsModel));
+				} else {
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
 		}
 	});
-var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$table = _VirtualDom_node('table');
+var elm$html$Html$tbody = _VirtualDom_node('tbody');
+var elm$html$Html$td = _VirtualDom_node('td');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$html$Html$th = _VirtualDom_node('th');
+var elm$html$Html$thead = _VirtualDom_node('thead');
+var elm$html$Html$tr = _VirtualDom_node('tr');
+var author$project$Page$Categories$viewCategories = function (categories) {
+	return A2(
+		elm$html$Html$table,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$thead,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$tr,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$th,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('id')
+									])),
+								A2(
+								elm$html$Html$th,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('name')
+									])),
+								A2(
+								elm$html$Html$th,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('description')
+									]))
+							]))
+					])),
+				A2(
+				elm$html$Html$tbody,
+				_List_Nil,
+				A2(
+					elm$core$List$map,
+					function (category) {
+						return A2(
+							elm$html$Html$tr,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text(
+											elm$core$String$fromInt(category.id))
+										])),
+									A2(
+									elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text(category.name)
+										])),
+									A2(
+									elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text(category.description)
+										]))
+								]));
+					},
+					categories))
+			]));
+};
+var elm$core$List$isEmpty = function (xs) {
+	if (!xs.b) {
+		return true;
+	} else {
+		return false;
+	}
+};
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6565,6 +6802,162 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			elm$json$Json$Encode$string(string));
 	});
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var author$project$Page$Categories$view = function (model) {
+	return {
+		content: _List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$h1,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Categories')
+							])),
+						elm$core$List$isEmpty(model.categories) ? A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('cart-panel')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('no categories')
+							])) : author$project$Page$Categories$viewCategories(model.categories)
+					]))
+			]),
+		title: 'Categories Page'
+	};
+};
+var elm$core$String$fromFloat = _String_fromNumber;
+var author$project$Page$Components$viewComponents = function (components) {
+	return A2(
+		elm$html$Html$table,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$thead,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$tr,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$th,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('id')
+									])),
+								A2(
+								elm$html$Html$th,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('name')
+									])),
+								A2(
+								elm$html$Html$th,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('description')
+									])),
+								A2(
+								elm$html$Html$th,
+								_List_Nil,
+								_List_fromArray(
+									[
+										elm$html$Html$text('price')
+									]))
+							]))
+					])),
+				A2(
+				elm$html$Html$tbody,
+				_List_Nil,
+				A2(
+					elm$core$List$map,
+					function (component) {
+						return A2(
+							elm$html$Html$tr,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text(
+											elm$core$String$fromInt(component.id))
+										])),
+									A2(
+									elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text(component.name)
+										])),
+									A2(
+									elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text(component.description)
+										])),
+									A2(
+									elm$html$Html$td,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text(
+											elm$core$String$fromFloat(component.price))
+										]))
+								]));
+					},
+					components))
+			]));
+};
+var author$project$Page$Components$view = function (model) {
+	return {
+		content: _List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$h1,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Components')
+							])),
+						elm$core$List$isEmpty(model.components) ? A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('cart-panel')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('no component')
+							])) : author$project$Page$Components$viewComponents(model.components)
+					]))
+			]),
+		title: 'Components Page'
+	};
+};
+var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
@@ -6636,12 +7029,6 @@ var author$project$Page$NotFound$view = function (_n0) {
 		title: 'Page Not Found'
 	};
 };
-var elm$html$Html$table = _VirtualDom_node('table');
-var elm$html$Html$tbody = _VirtualDom_node('tbody');
-var elm$html$Html$td = _VirtualDom_node('td');
-var elm$html$Html$th = _VirtualDom_node('th');
-var elm$html$Html$thead = _VirtualDom_node('thead');
-var elm$html$Html$tr = _VirtualDom_node('tr');
 var author$project$Page$Products$viewProducts = function (products) {
 	return A2(
 		elm$html$Html$table,
@@ -6719,14 +7106,6 @@ var author$project$Page$Products$viewProducts = function (products) {
 					products))
 			]));
 };
-var elm$core$List$isEmpty = function (xs) {
-	if (!xs.b) {
-		return true;
-	} else {
-		return false;
-	}
-};
-var elm$html$Html$h1 = _VirtualDom_node('h1');
 var author$project$Page$Products$view = function (model) {
 	return {
 		content: _List_fromArray(
@@ -6873,11 +7252,23 @@ var author$project$Main$view = function (model) {
 				author$project$PageLayout$view,
 				author$project$Main$ProductsMsg,
 				author$project$Page$Products$view(productsModel));
-		default:
+		case 'NotFound':
 			return A2(
 				author$project$PageLayout$view,
 				elm$core$Basics$never,
 				author$project$Page$NotFound$view(_Utils_Tuple0));
+		case 'Categories':
+			var categoriesModel = _n0.a;
+			return A2(
+				author$project$PageLayout$view,
+				author$project$Main$CategoriesMsg,
+				author$project$Page$Categories$view(categoriesModel));
+		default:
+			var componentsModel = _n0.a;
+			return A2(
+				author$project$PageLayout$view,
+				author$project$Main$ComponentsMsg,
+				author$project$Page$Components$view(componentsModel));
 	}
 };
 var elm$browser$Browser$application = _Browser_application;
